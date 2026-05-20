@@ -1537,9 +1537,11 @@ function onXRFrame(time, frame) {
         `y=${currentHitTestPose.position.y.toFixed(3)}, ` +
         `z=${currentHitTestPose.position.z.toFixed(3)}\n\n`
       : "hit-test=未検出\n\n";
-    const floorDistanceText = currentPose
+      
+      const floorDistanceText = currentPose
       ? `床面までの距離=${Math.abs(currentPose.position.y).toFixed(2)}m\n\n`
       : "床面までの距離=未取得\n\n";
+
 
     /*
     output.textContent =
@@ -1549,7 +1551,6 @@ function onXRFrame(time, frame) {
       `画面比例=${getDisplayFourThreeLabel()}\n` +
       xrOrientationText +
       hitTestText +
-      floorDistanceText +
       "=== Pose ===\n" +
       `xp=${currentPose.position.x.toFixed(3)}\n` +
       `yp=${currentPose.position.y.toFixed(3)}\n` +
@@ -1571,6 +1572,7 @@ function onXRFrame(time, frame) {
         ? `4:3-roi=${roi.sx},${roi.sy},${roi.sWidth},${roi.sHeight}\npreview-size=${roi.sWidth}x${roi.sHeight}`
         : "");
     */
+
   }
 
   if (pendingCapture) {
