@@ -567,6 +567,9 @@ const liveGuide = document.getElementById("live-guide");
 const frozenGuide = document.getElementById("frozen-guide");
 
 let pendingOutputMetricsFrame = null;
+let hitTestSource = null;
+let currentHitTestPose = null;
+
 
 function updateOutputMetrics() {
   if (pendingOutputMetricsFrame !== null) return;
@@ -975,8 +978,8 @@ async function startXR() {
   }
 
   xrSession = await navigator.xr.requestSession("immersive-ar", {
-    requiredFeatures: ["camera-access"],
-    optionalFeatures: ["dom-overlay"],
+    requiredFeatures: ["camera-access", "hit-test"],
+    optionalFeatures: ["dom-overlay", "local-floor"],
     domOverlay: { root: document.body }
   });
 
@@ -985,7 +988,17 @@ async function startXR() {
   });
 
   glBinding = new XRWebGLBinding(xrSession, gl);
-  refSpace = await xrSession.requestReferenceSpace("local");
+  try {
+    refSpace = await xrSession.requestReferenceSpace("local-floor");
+  } catch {
+    refSpace = await xrSession.requestReferenceSpace("local");
+  }
+
+  const viewerSpace = await xrSession.requestReferenceSpace("viewer");
+  hitTestSource = await xrSession.requestHitTestSource({
+    space: viewerSpace
+  });
+
   initCameraCopyPipeline();
 
   showLiveFourThreeGuide();
@@ -1472,6 +1485,30 @@ function onXRFrame(time, frame) {
 
   currentIntrinsics = getCameraIntrinsics(view.projectionMatrix, viewport);
 
+  currentHitTestPose = null;
+  if (hitTestSource) {
+    const hitTestResults = frame.getHitTestResults(hitTestSource);
+    if (hitTestResults.length > 0) {
+      const hit = hitTestResults[0];
+      const hitPose = hit.getPose(refSpace);
+      if (hitPose) {
+        currentHitTestPose = {
+          position: {
+            x: hitPose.transform.position.x,
+            y: hitPose.transform.position.y,
+            z: hitPose.transform.position.z
+          },
+          orientation: {
+            x: hitPose.transform.orientation.x,
+            y: hitPose.transform.orientation.y,
+            z: hitPose.transform.orientation.z,
+            w: hitPose.transform.orientation.w
+          }
+        };
+      }
+    }
+  }
+
   if (!isFrozen) {
     let roi = null;
 
@@ -1494,13 +1531,20 @@ function onXRFrame(time, frame) {
         `roll=${currentXRDeviceOrientation.roll.toFixed(1)}\n` +
         `forward=${formatVector3(currentXRDeviceOrientation.forward)}\n\n`
       : "XR手机方向=未知\n\n";
+    const hitTestText = currentHitTestPose
+      ? `hit-test=検出あり\n` +
+        `x=${currentHitTestPose.position.x.toFixed(3)}, ` +
+        `y=${currentHitTestPose.position.y.toFixed(3)}, ` +
+        `z=${currentHitTestPose.position.z.toFixed(3)}\n\n`
+      : "hit-test=未検出\n\n";
 
-    /*output.textContent =
+    output.textContent =
       "WebXR中...\n" +
       `屏幕方向=${formatScreenOrientationInfo(screenOrientation)}\n` +
       `文字方向=${currentOutputRotationClass || "normal"}\n` +
       `画面比例=${getDisplayFourThreeLabel()}\n` +
       xrOrientationText +
+      hitTestText +
       "=== Pose ===\n" +
       `xp=${currentPose.position.x.toFixed(3)}\n` +
       `yp=${currentPose.position.y.toFixed(3)}\n` +
@@ -1521,7 +1565,6 @@ function onXRFrame(time, frame) {
       (roi
         ? `4:3-roi=${roi.sx},${roi.sy},${roi.sWidth},${roi.sHeight}\npreview-size=${roi.sWidth}x${roi.sHeight}`
         : "");
-        */
   }
 
   if (pendingCapture) {
