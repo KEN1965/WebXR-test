@@ -1495,7 +1495,7 @@ function onXRFrame(time, frame) {
         `forward=${formatVector3(currentXRDeviceOrientation.forward)}\n\n`
       : "XR手机方向=未知\n\n";
 
-    output.textContent =
+    /*output.textContent =
       "WebXR中...\n" +
       `屏幕方向=${formatScreenOrientationInfo(screenOrientation)}\n` +
       `文字方向=${currentOutputRotationClass || "normal"}\n` +
@@ -1521,6 +1521,7 @@ function onXRFrame(time, frame) {
       (roi
         ? `4:3-roi=${roi.sx},${roi.sy},${roi.sWidth},${roi.sHeight}\npreview-size=${roi.sWidth}x${roi.sHeight}`
         : "");
+        */
   }
 
   if (pendingCapture) {
