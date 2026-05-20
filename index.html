@@ -1537,6 +1537,40 @@ function onXRFrame(time, frame) {
         `y=${currentHitTestPose.position.y.toFixed(3)}, ` +
         `z=${currentHitTestPose.position.z.toFixed(3)}\n\n`
       : "hit-test=未検出\n\n";
+    const floorDistanceText = currentPose
+      ? `床面までの距離=${Math.abs(currentPose.position.y).toFixed(2)}m\n\n`
+      : "床面までの距離=未取得\n\n";
+
+    /*
+    output.textContent =
+      "WebXR中...\n" +
+      `屏幕方向=${formatScreenOrientationInfo(screenOrientation)}\n` +
+      `文字方向=${currentOutputRotationClass || "normal"}\n` +
+      `画面比例=${getDisplayFourThreeLabel()}\n` +
+      xrOrientationText +
+      hitTestText +
+      floorDistanceText +
+      "=== Pose ===\n" +
+      `xp=${currentPose.position.x.toFixed(3)}\n` +
+      `yp=${currentPose.position.y.toFixed(3)}\n` +
+      `zp=${currentPose.position.z.toFixed(3)}\n\n` +
+      `xo=${currentPose.orientation.x.toFixed(3)}\n` +
+      `yo=${currentPose.orientation.y.toFixed(3)}\n` +
+      `zo=${currentPose.orientation.z.toFixed(3)}\n` +
+      `wo=${currentPose.orientation.w.toFixed(3)}\n\n` +
+      "=== Intrinsics ===\n" +
+      `fx=${currentIntrinsics.fx.toFixed(2)}\n` +
+      `fy=${currentIntrinsics.fy.toFixed(2)}\n` +
+      `cx=${currentIntrinsics.cx.toFixed(2)}\n` +
+      `cy=${currentIntrinsics.cy.toFixed(2)}\n` +
+      `guide-in-roi-normalized=${formatNormalizedRect(guideInROINormalized)}` +
+      (guideInROI
+        ? `, guide-in-roi=x:${guideInROI.x}, y:${guideInROI.y}, w:${guideInROI.w}, h:${guideInROI.h}\n`
+        : "\n") +
+      (roi
+        ? `4:3-roi=${roi.sx},${roi.sy},${roi.sWidth},${roi.sHeight}\npreview-size=${roi.sWidth}x${roi.sHeight}`
+        : "");
+    */
 
     output.textContent =
       "WebXR中...\n" +
@@ -1545,6 +1579,7 @@ function onXRFrame(time, frame) {
       `画面比例=${getDisplayFourThreeLabel()}\n` +
       xrOrientationText +
       hitTestText +
+      floorDistanceText +
       "=== Pose ===\n" +
       `xp=${currentPose.position.x.toFixed(3)}\n` +
       `yp=${currentPose.position.y.toFixed(3)}\n` +
