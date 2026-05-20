@@ -1540,6 +1540,12 @@ function onXRFrame(time, frame) {
     const floorDistanceText = currentPose
       ? `床面までの距離=${Math.abs(currentPose.position.y).toFixed(2)}m\n\n`
       : "床面までの距離=未取得\n\n";
+        
+        if (currentHitTestPose) {
+          output.textContent = `床面までの距離=${Math.abs(currentPose.position.y).toFixed(2)}m`;
+        } else {
+          output.textContent = "床面検出中...";
+        }
 
 
     /*
