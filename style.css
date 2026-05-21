@@ -738,3 +738,7 @@ body.target-visible #surface-status {
 body.floor-recognized #surface-status {
   display: none;
 }
+/* 高浜追加：詳細非表示 */
+#output {
+  display: none;
+}
