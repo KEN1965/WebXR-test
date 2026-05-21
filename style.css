@@ -707,7 +707,6 @@ body.xr-started.phone-bottom-right #discard {
 }
 
 /* 高浜追加（ターゲットマーク） */
-/* 高浜追加（ターゲットマーク） */
 body #target-image {
   position: fixed;
   left: 50%;
@@ -721,15 +720,15 @@ body #target-image {
   pointer-events: none;
 }
 
-body.floor-recognized:not(.capture-frozen):not(.guide-visible):not(.target-hidden) #target-image {
+body.target-visible:not(.target-hidden):not(.capture-frozen) #target-image {
   display: block;
 }
 
-body.capture-frozen #target-image,
-body.guide-visible #target-image,
-body.target-hidden #target-image {
+body.target-hidden #target-image,
+body.capture-frozen #target-image {
   display: none;
 }
-body.floor-recognized:not(.capture-frozen):not(.guide-visible):not(.target-hidden) #surface-status {
+
+body.target-visible #surface-status {
   display: none;
 }

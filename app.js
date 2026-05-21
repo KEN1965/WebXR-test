@@ -376,7 +376,7 @@ function updateFloorRecognitionFromFrame(frame) {
         document.body.classList.add("floor-recognized");
         document.body.classList.add("target-visible");
         document.body.classList.remove("target-hidden");
-        
+
       updateSurfaceStatus();
     }
   } catch (e) {
@@ -873,7 +873,6 @@ function showLiveFourThreeGuide() {
 
 // 追加
   document.body.classList.add("guide-visible");
-  document.body.classList.remove("target-visible");
 }
 
 function showFrozenGuide() {
@@ -1173,6 +1172,7 @@ captureBtn.addEventListener("click", () => {
   if (!initialized || !cameraFeedReady) return;
 
     document.body.classList.add("target-hidden");
+    document.body.classList.remove("target-visible");
 
   if (!isFrozen) {
     pendingCapture = true;
