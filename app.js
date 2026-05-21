@@ -1172,7 +1172,6 @@ captureBtn.addEventListener("click", () => {
   if (!initialized || !cameraFeedReady) return;
 
     document.body.classList.add("target-hidden");
-    document.body.classList.remove("target-visible");
 
   if (!isFrozen) {
     pendingCapture = true;
