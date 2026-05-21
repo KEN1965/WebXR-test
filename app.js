@@ -374,7 +374,9 @@ function updateFloorRecognitionFromFrame(frame) {
     if (floorRecognized) {
       // 高浜追加
         document.body.classList.add("floor-recognized");
+        document.body.classList.add("target-visible");
         document.body.classList.remove("target-hidden");
+        
       updateSurfaceStatus();
     }
   } catch (e) {
@@ -868,6 +870,10 @@ function showLiveFourThreeGuide() {
   liveLayer.style.display = "block";
   updateGuideFrame(liveGuide, liveCanvas);
   liveGuide.style.display = "block";
+
+// 追加
+  document.body.classList.add("guide-visible");
+  document.body.classList.remove("target-visible");
 }
 
 function showFrozenGuide() {
