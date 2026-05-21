@@ -711,18 +711,19 @@ body.xr-started.phone-bottom-right #discard {
   position: fixed;
   left: 50%;
   top: 50%;
-  width: 120px;
-  height: 120px;
+  width: min(24vw, 140px);
+  height: min(24vw, 140px);
   transform: translate(-50%, -50%);
   z-index: 18;
-  display: none;
+  display: none !important;
+  opacity: 0.7;
   pointer-events: none;
 }
 
 body.floor-recognized:not(.capture-frozen) #target-image {
-  display: block;
+  display: block !important;
 }
 
 body.target-hidden #target-image {
-  display: none;
+  display: none !important;
 }
