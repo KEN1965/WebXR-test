@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebXR 4:3 Preview + 4:3 Capture</title>
+
+  <link rel="stylesheet" href="./styles.css">
+
+</head>
+<body>
+  <button id="startXR">Start XR</button>
+  <div id="loading-overlay" aria-label="加载中">
+    <div class="dot-spinner" aria-hidden="true">
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+  <div id="surface-status">【地面を写してください】</div>
+<div id="white-strip"></div>
+ <div id="bottom-bar">
+  <button id="capture" disabled aria-label="撮影"></button>
+  <button id="ai-button" aria-label="AI"><span class="ai-label">AI</span></button>
+  <div id="photo-count-label">写真0枚目</div>
+ </div>
+  <button id="confirm-save">保存 4:3 写真</button>
+  <button id="discard" aria-label="取消冻结"></button>
+  <pre id="output">未初始化</pre>
+
+  <canvas id="captureCanvas"></canvas>
+
+  <div id="live-layer">
+    <canvas id="liveCanvas"></canvas>
+  </div>
+
+  <div id="freeze-layer">
+    <canvas id="viewCanvas"></canvas>
+  </div>
+
+  <div id="live-guide">
+    <div class="guide-corner corner-tl"></div>
+    <div class="guide-corner corner-tr"></div>
+    <div class="guide-corner corner-bl"></div>
+    <div class="guide-corner corner-br"></div>
+    <div class="edge-handle top" data-handle="top"></div>
+    <div class="edge-handle right" data-handle="right"></div>
+    <div class="edge-handle bottom" data-handle="bottom"></div>
+    <div class="edge-handle left" data-handle="left"></div>
+    <div class="resize-handle tl" data-handle="tl"></div>
+    <div class="resize-handle tr" data-handle="tr"></div>
+    <div class="resize-handle bl" data-handle="bl"></div>
+    <div class="resize-handle br" data-handle="br"></div>
+  </div>
+
+  <div id="frozen-guide">
+    <div class="guide-corner corner-tl"></div>
+    <div class="guide-corner corner-tr"></div>
+    <div class="guide-corner corner-bl"></div>
+    <div class="guide-corner corner-br"></div>
+  </div>
+
+<script src="./app.js"></script>
+</body>
+</html>

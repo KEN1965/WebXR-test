@@ -1,0 +1,708 @@
+<style>
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+      font-family: sans-serif;
+    }
+
+    :root {
+      --bottom-bar-height: 120px;
+      --action-button-gap: 5px;
+      --action-button-size: 50px;
+      --discard-top: 124px;
+    }
+
+    #bottom-bar {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: var(--bottom-bar-height);
+      z-index: 25;
+      background: #3a3a3a;
+      display: none;
+    }
+
+    #bottom-bar::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: var(--bottom-save-strip-top, -50px);
+      height: var(--bottom-save-strip-height, 65px);
+      background: transparent;
+      pointer-events: none;
+    }
+
+    body.capture-frozen #bottom-bar::before {
+      background: #fff;
+    }
+
+    body.capture-frozen::before {
+      content: "";
+      position: fixed;
+      left: 0;
+      right: 0;
+      top: var(--bottom-bar-height);
+      height: var(--top-save-strip-height, 0px);
+      z-index: 24;
+      background: #fff;
+      pointer-events: none;
+    }
+
+    #startXR, #capture, #confirm-save, #discard, #ai-button {
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 30;
+      padding: 14px 24px;
+      border: none;
+      border-radius: 999px;
+      font-size: 16px;
+      background: rgba(255,255,255,0.92);
+      color: #111;
+      font-weight: bold;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      line-height: 1;
+      white-space: nowrap;
+      writing-mode: horizontal-tb;
+      text-orientation: mixed;
+    }
+
+    #startXR { bottom: 84px; }
+
+    #capture,
+    #confirm-save,
+    #discard {
+      padding: 0;
+      display: none;
+      border-radius: 50%;
+      color: transparent;
+      font-size: 0;
+      overflow: hidden;
+    }
+
+    #capture {
+      bottom: 24px;
+      width: 76px;
+      height: 76px;
+      align-items: center;
+      justify-content: center;
+      background: #2b2b2b;
+      border: 3px solid #696969;
+      box-shadow:
+        0 4px 12px rgba(0,0,0,0.35),
+        inset 0 0 0 3px #151515,
+        inset 0 0 0 6px #4a4a4a;
+    }
+
+    #capture::before {
+      content: "";
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: #cfcfcf;
+      border: 2px solid #9c9c9c;
+      box-shadow:
+        inset 0 2px 2px rgba(255,255,255,0.8),
+        inset 0 -2px 2px rgba(0,0,0,0.16);
+    }
+
+    #capture:active::before {
+      width: 52px;
+      height: 52px;
+      background: #bdbdbd;
+    }
+
+    #capture.unfreeze-mode {
+      top: auto;
+      bottom: 24px;
+    }
+
+    #ai-button {
+      left: calc(50% - 92px);
+      bottom: 24px;
+      width: 76px;
+      height: 76px;
+      padding: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at center,
+          #426c05 0 60%,
+          #8d8d8d 60% 68%,
+          #202020 70% 100%);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.45);
+      color: rgba(0,0,0,0.58);
+      font-size: 36px;
+      font-weight: 800;
+      letter-spacing: 0;
+      line-height: 1;
+      pointer-events: auto;
+    }
+
+    #ai-button .ai-label,
+body.landscape-layout #ai-button .ai-label,
+body.phone-bottom-left #ai-button .ai-label,
+body.phone-bottom-right #ai-button .ai-label {
+  transform: none;
+}
+
+    #confirm-save,
+    #discard {
+      width: var(--action-button-size);
+      height: var(--action-button-size);
+      text-indent: 200%;
+    }
+
+    #confirm-save {
+      bottom: calc(var(--bottom-bar-height) + var(--action-button-gap));
+      background: #12a8f4;
+    }
+
+    #discard {
+      top: var(--discard-top);
+      bottom: auto;
+      background: #e51f23;
+    }
+
+    #confirm-save::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 47%;
+      width: 16px;
+      height: 30px;
+      border-right: 8px solid white;
+      border-bottom: 8px solid white;
+      border-radius: 3px;
+      transform: translate(-50%, -58%) rotate(45deg);
+      pointer-events: none;
+    }
+
+    #discard::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 5px;
+      width: 34px;
+      height: 18px;
+      background:
+        linear-gradient(white 0 0) center top / 8px 12px no-repeat,
+        linear-gradient(white 0 0) center bottom / 34px 8px no-repeat;
+      border-radius: 2px;
+      transform: translateX(-50%);
+      pointer-events: none;
+    }
+
+    #discard::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 30px;
+      width: 22px;
+      height: 20px;
+      border-right: 5px solid white;
+      border-bottom: 5px solid white;
+      border-left: 5px solid white;
+      border-radius: 0 0 7px 7px;
+      transform: translateX(-50%) perspective(18px) rotateX(-8deg);
+      pointer-events: none;
+    }
+
+    #capture:disabled, #startXR:disabled {
+      opacity: 0.6;
+    }
+
+    #loading-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 28;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.18);
+      pointer-events: none;
+    }
+
+    body.xr-loading:not(.xr-camera-ready) #loading-overlay {
+      display: flex;
+    }
+
+    .dot-spinner {
+      position: relative;
+      width: 58px;
+      height: 58px;
+      animation: spinner-rotate 1.05s linear infinite;
+    }
+
+    .dot-spinner span {
+      --dot-angle: 0deg;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 8px;
+      height: 8px;
+      margin: -4px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.96);
+      box-shadow: 0 0 8px rgba(255,255,255,0.28);
+      transform: rotate(var(--dot-angle)) translateY(-24px);
+      animation: dot-pulse 1.05s linear infinite;
+    }
+
+    .dot-spinner span:nth-child(1) { --dot-angle: 0deg; animation-delay: -0.91875s; }
+    .dot-spinner span:nth-child(2) { --dot-angle: 45deg; animation-delay: -0.7875s; }
+    .dot-spinner span:nth-child(3) { --dot-angle: 90deg; animation-delay: -0.65625s; }
+    .dot-spinner span:nth-child(4) { --dot-angle: 135deg; animation-delay: -0.525s; }
+    .dot-spinner span:nth-child(5) { --dot-angle: 180deg; animation-delay: -0.39375s; }
+    .dot-spinner span:nth-child(6) { --dot-angle: 225deg; animation-delay: -0.2625s; }
+    .dot-spinner span:nth-child(7) { --dot-angle: 270deg; animation-delay: -0.13125s; }
+    .dot-spinner span:nth-child(8) { --dot-angle: 315deg; animation-delay: 0s; }
+
+    @keyframes spinner-rotate {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes dot-pulse {
+      0%, 100% {
+        opacity: 1;
+        transform: rotate(var(--dot-angle)) translateY(-24px) scale(1);
+      }
+      55% {
+        opacity: 0.28;
+        transform: rotate(var(--dot-angle)) translateY(-24px) scale(0.72);
+      }
+    }
+
+    #surface-status {
+      position: fixed;
+      left: 50%;
+      top: calc(22px + env(safe-area-inset-top));
+      z-index: 29;
+      display: none;
+      transform: translateX(-50%);
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(0,0,0,0.58);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1;
+      white-space: nowrap;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+      pointer-events: none;
+    }
+
+    body.xr-loading #surface-status,
+    body.xr-started #surface-status {
+      display: block;
+    }
+
+    body.output-rotate-ccw #surface-status {
+      top: 50%;
+      left: calc(100vw - 22px - env(safe-area-inset-right));
+      transform: translate(-100%, -50%) rotate(90deg);
+      transform-origin: center center;
+    }
+
+    body.output-rotate-cw #surface-status {
+      top: 50%;
+      left: calc(22px + env(safe-area-inset-left));
+      transform: translate(0, -50%) rotate(-90deg);
+      transform-origin: center center;
+    }
+
+    body.landscape-layout #startXR {
+      bottom: calc(104px + env(safe-area-inset-bottom));
+    }
+
+    body.phone-bottom-left #confirm-save,
+    body.phone-bottom-left #discard {
+      transform: translateX(-50%) rotate(-90deg);
+    }
+
+    body.phone-bottom-right #confirm-save,
+    body.phone-bottom-right #discard {
+      transform: translateX(-50%) rotate(90deg);
+    }
+
+    body.phone-bottom-left #startXR {
+      left: 50%;
+      right: auto;
+      top: 70%;
+      bottom: auto;
+      transform: translate(-50%, -50%);
+      transform-origin: center center;
+    }
+
+    body.phone-bottom-right #startXR {
+      left: 50%;
+      right: auto;
+      top: 70%;
+      bottom: auto;
+      transform: translate(-50%, -50%) ;
+      transform-origin: center center;
+    }
+
+    body.xr-started #bottom-bar {
+      display: block;
+    }
+
+    body.xr-started:not(.xr-camera-ready) #bottom-bar {
+      display: none;
+    }
+
+    #output {
+      --output-half-height: 0px;
+      position: fixed;
+      top: calc(20px + env(safe-area-inset-top));
+      left: calc(20px + env(safe-area-inset-left));
+      z-index: 30;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      padding: 12px;
+      white-space: pre-wrap;
+      font-size: 12px;
+      line-height: 1.35;
+      box-sizing: border-box;
+      max-width: calc(100vw - 40px);
+      max-height: calc(100vh - 40px);
+      overflow: hidden;
+      border-radius: 8px;
+      pointer-events: none;
+      transform-origin: top left;
+      transform: none;
+      transition: top 0.2s ease, left 0.2s ease, transform 0.2s ease, max-width 0.2s ease;
+    }
+
+    body.landscape-layout #output {
+      top: calc(16px + env(safe-area-inset-top));
+      left: calc(16px + env(safe-area-inset-left));
+      max-width: min(560px, calc(100vw - 144px));
+      max-height: calc(100vh - 32px);
+      transform: none;
+    }
+
+    body.output-rotate-ccw #output {
+      top: calc(16px + env(safe-area-inset-bottom));
+      left: calc(100vw - 16px - env(safe-area-inset-right));
+      max-width: calc(100vh - 32px);
+      max-height: calc(100vw - 32px);
+      transform: rotate(90deg);
+    }
+
+    body.output-rotate-cw #output {
+      top: calc(16px + env(safe-area-inset-top) + var(--output-half-height));
+      left: calc(16px + env(safe-area-inset-left));
+      max-width: calc(100vh - 32px);
+      max-height: calc(100vw - 32px);
+      transform: rotate(-90deg);
+    }
+
+    #confirm-save,
+#discard,
+#capture,
+#ai-button {
+  transform-origin: center center;
+}
+
+#photo-count-label {
+  position: fixed;
+  left: calc(50% + 58px);
+  bottom: 62px;
+  z-index: 31;
+  display: none;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  pointer-events: none;
+  transform: translateY(50%);
+}
+
+body.xr-started.xr-camera-ready #photo-count-label {
+  display: block;
+}
+
+body.phone-bottom-left #confirm-save,
+body.phone-bottom-left #discard,
+body.phone-bottom-left #capture,
+body.phone-bottom-left #ai-button,
+body.phone-bottom-right #photo-count-label {
+  transform: translateX(-50%) rotate(-90deg);
+}
+
+body.phone-bottom-right #confirm-save,
+body.phone-bottom-right #discard,
+body.phone-bottom-right #capture,
+body.phone-bottom-right #ai-button,
+body.phone-bottom-right #photo-count-label {
+  transform: translateX(-50%) rotate(90deg);
+}
+
+    #live-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 5;
+      display: none;
+      background: #000;
+      pointer-events: none;
+    }
+
+    #freeze-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      display: none;
+      background: #000;
+    }
+
+    #liveCanvas,
+    #viewCanvas {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      background: #000;
+    }
+
+    #live-guide,
+    #frozen-guide {
+      --guide-stroke: 10px;
+      --guide-corner-size: min(62px, 43%);
+      position: fixed;
+      display: none;
+      border: none;
+      background: rgba(255,255,255,0.07);
+      box-shadow: 0 0 0 9999px rgba(0,0,0,0.52);
+    }
+
+    /* 实时阶段的取景框 */
+    #live-guide {
+      z-index: 15;
+      pointer-events: auto;
+      touch-action: none;
+      cursor: move;
+    }
+
+    #frozen-guide {
+      z-index: 20;
+      pointer-events: none;
+    }
+
+    #live-guide .guide-corner,
+    #frozen-guide .guide-corner {
+      position: absolute;
+      width: var(--guide-corner-size);
+      height: var(--guide-corner-size);
+      pointer-events: none;
+    }
+
+    #live-guide .guide-corner::before,
+    #live-guide .guide-corner::after,
+    #frozen-guide .guide-corner::before,
+    #frozen-guide .guide-corner::after {
+      content: "";
+      position: absolute;
+      display: block;
+      border-radius: 999px;
+      background: #ffd21a;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+
+    #live-guide .guide-corner::before,
+    #frozen-guide .guide-corner::before {
+      width: 100%;
+      height: var(--guide-stroke);
+    }
+
+    #live-guide .guide-corner::after,
+    #frozen-guide .guide-corner::after {
+      width: var(--guide-stroke);
+      height: 100%;
+    }
+
+    .corner-tl {
+      top: calc(var(--guide-stroke) * -0.5);
+      left: calc(var(--guide-stroke) * -0.5);
+    }
+
+    .corner-tl::before,
+    .corner-tl::after {
+      top: 0;
+      left: 0;
+    }
+
+    .corner-tr {
+      top: calc(var(--guide-stroke) * -0.5);
+      right: calc(var(--guide-stroke) * -0.5);
+    }
+
+    .corner-tr::before,
+    .corner-tr::after {
+      top: 0;
+      right: 0;
+    }
+
+    .corner-bl {
+      left: calc(var(--guide-stroke) * -0.5);
+      bottom: calc(var(--guide-stroke) * -0.5);
+    }
+
+    .corner-bl::before,
+    .corner-bl::after {
+      left: 0;
+      bottom: 0;
+    }
+
+    .corner-br {
+      right: calc(var(--guide-stroke) * -0.5);
+      bottom: calc(var(--guide-stroke) * -0.5);
+    }
+
+    .corner-br::before,
+    .corner-br::after {
+      right: 0;
+      bottom: 0;
+    }
+
+    .resize-handle {
+      position: absolute;
+      width: 28px;
+      height: 28px;
+      margin: -14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.001);
+      touch-action: none;
+    }
+
+    .resize-handle.tl {
+      top: 0;
+      left: 0;
+      cursor: nwse-resize;
+    }
+
+    .resize-handle.tr {
+      top: 0;
+      right: 0;
+      cursor: nesw-resize;
+    }
+
+    .resize-handle.bl {
+      bottom: 0;
+      left: 0;
+      cursor: nesw-resize;
+    }
+
+    .resize-handle.br {
+      right: 0;
+      bottom: 0;
+      cursor: nwse-resize;
+    }
+
+    .edge-handle {
+      position: absolute;
+      background: rgba(255,255,255,0.001);
+      touch-action: none;
+    }
+
+    .edge-handle.top,
+    .edge-handle.bottom {
+      left: 16px;
+      right: 16px;
+      height: 20px;
+      margin-top: -10px;
+      margin-bottom: -10px;
+      cursor: ns-resize;
+    }
+
+    .edge-handle.top {
+      top: 0;
+    }
+
+    .edge-handle.bottom {
+      bottom: 0;
+    }
+
+    .edge-handle.left,
+    .edge-handle.right {
+      top: 16px;
+      bottom: 16px;
+      width: 20px;
+      margin-left: -10px;
+      margin-right: -10px;
+      cursor: ew-resize;
+    }
+
+    .edge-handle.left {
+      left: 0;
+    }
+
+    .edge-handle.right {
+      right: 0;
+    }
+
+    #captureCanvas {
+      display: none;
+    }
+
+    /* 强制锁定 XR 后的底部 UI 位置：横屏/竖屏都使用竖屏布局位置 */
+body.xr-started #bottom-bar,
+body.xr-started.phone-bottom-left #bottom-bar,
+body.xr-started.phone-bottom-right #bottom-bar {
+  left: 0 !important;
+  right: 0 !important;
+  top: auto !important;
+  bottom: 0 !important;
+  width: auto !important;
+  height: var(--bottom-bar-height) !important;
+}
+
+/* capture 按钮始终固定在竖屏布局的底部中间 */
+body.xr-started #capture,
+body.xr-started.phone-bottom-left #capture,
+body.xr-started.phone-bottom-right #capture {
+  left: 50% !important;
+  right: auto !important;
+  top: auto !important;
+  bottom: 24px !important;
+}
+
+/* AI 按钮始终固定在竖屏布局中 capture 左侧 */
+body.xr-started #ai-button,
+body.xr-started.phone-bottom-left #ai-button,
+body.xr-started.phone-bottom-right #ai-button {
+  left: calc(50% - 92px) !important;
+  right: auto !important;
+  top: auto !important;
+  bottom: 24px !important;
+}
+
+/* confirm-save 始终固定在竖屏布局中 bottom-bar 上方 */
+body.xr-started #confirm-save,
+body.xr-started.phone-bottom-left #confirm-save,
+body.xr-started.phone-bottom-right #confirm-save {
+  left: 50% !important;
+  right: auto !important;
+  top: auto !important;
+  bottom: calc(var(--bottom-bar-height) + var(--action-button-gap)) !important;
+}
+
+/* discard 始终固定在竖屏布局中的原始 top 位置 */
+body.xr-started #discard,
+body.xr-started.phone-bottom-left #discard,
+body.xr-started.phone-bottom-right #discard {
+  left: 50% !important;
+  right: auto !important;
+  top: var(--discard-top) !important;
+  bottom: auto !important;
+}
+  </style>
