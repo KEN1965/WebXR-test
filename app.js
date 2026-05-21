@@ -1,4 +1,4 @@
-<script>
+
 const output = document.getElementById("output");
 const startXRBtn = document.getElementById("startXR");
 const surfaceStatus = document.getElementById("surface-status");
@@ -1247,4 +1247,3 @@ liveGuide.addEventListener("pointercancel", (event) => {
   liveGuide.releasePointerCapture(event.pointerId);
   activeGuideDrag = null;
 });
-</script>

@@ -1,4 +1,4 @@
-<style>
+
     html, body {
       margin: 0;
       width: 100%;
@@ -705,4 +705,3 @@ body.xr-started.phone-bottom-right #discard {
   top: var(--discard-top) !important;
   bottom: auto !important;
 }
-  </style>
