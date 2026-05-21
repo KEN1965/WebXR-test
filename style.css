@@ -360,7 +360,10 @@ body.phone-bottom-right #ai-button .ai-label {
     }
 
     #output {
+
       --output-half-height: 0px;
+      /* 高浜追加 最初から非表示*/
+      display: none;
       position: fixed;
       top: calc(20px + env(safe-area-inset-top));
       left: calc(20px + env(safe-area-inset-left));
