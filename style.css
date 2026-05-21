@@ -705,3 +705,24 @@ body.xr-started.phone-bottom-right #discard {
   top: var(--discard-top) !important;
   bottom: auto !important;
 }
+
+/* 高浜追加（ターゲットマーク） */
+#target-image {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  width: 120px;
+  height: 120px;
+  transform: translate(-50%, -50%);
+  z-index: 18;
+  display: none;
+  pointer-events: none;
+}
+
+body.floor-recognized:not(.capture-frozen) #target-image {
+  display: block;
+}
+
+body.target-hidden #target-image {
+  display: none;
+}

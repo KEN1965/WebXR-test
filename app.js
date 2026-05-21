@@ -372,6 +372,9 @@ function updateFloorRecognitionFromFrame(frame) {
     });
 
     if (floorRecognized) {
+      // 高浜追加
+        document.body.classList.add("floor-recognized");
+        document.body.classList.remove("target-hidden");
       updateSurfaceStatus();
     }
   } catch (e) {
@@ -1162,6 +1165,8 @@ startXRBtn.addEventListener("click", async () => {
 
 captureBtn.addEventListener("click", () => {
   if (!initialized || !cameraFeedReady) return;
+
+    document.body.classList.add("target-hidden");
 
   if (!isFrozen) {
     pendingCapture = true;
