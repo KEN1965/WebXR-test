@@ -732,3 +732,6 @@ body.capture-frozen #target-image {
 body.target-visible #surface-status {
   display: none;
 }
+body.floor-recognized #surface-status {
+  display: none;
+}
