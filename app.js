@@ -1,5 +1,6 @@
 
 const output = document.getElementById("output");
+output.style.display = "none";
 const startXRBtn = document.getElementById("startXR");
 const surfaceStatus = document.getElementById("surface-status");
 const bottomBar = document.getElementById("bottom-bar");
@@ -871,7 +872,7 @@ function showLiveFourThreeGuide() {
   updateGuideFrame(liveGuide, liveCanvas);
   liveGuide.style.display = "block";
 
-// 追加
+// 高浜追加
   document.body.classList.add("guide-visible");
 }
 
@@ -1169,8 +1170,9 @@ startXRBtn.addEventListener("click", async () => {
 });
 
 captureBtn.addEventListener("click", () => {
-  if (!initialized || !cameraFeedReady) return;
 
+  if (!initialized || !cameraFeedReady) return;
+// 高浜追加　ターゲット
     document.body.classList.add("target-hidden");
 
   if (!isFrozen) {
